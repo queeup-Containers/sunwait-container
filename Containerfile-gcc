@@ -1,0 +1,12 @@
+FROM gcc AS build
+
+WORKDIR /build
+
+RUN git clone -b master https://github.com/risacher/sunwait.git . && \
+    sed -i 's/LDFLAGS= -lm/LDFLAGS= -lm -static/' makefile && \
+    make
+
+FROM scratch
+COPY --from=build /build/sunwait /bin/
+
+ENTRYPOINT ["/bin/sunwait"]
